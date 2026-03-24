@@ -30,3 +30,6 @@ playwright-report/
 
 # Docker
 pgdata/
+
+# Specs
+docs/specs/
