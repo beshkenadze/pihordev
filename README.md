@@ -112,16 +112,29 @@ graph TD
 
 ## Architecture
 
-Bun workspaces + Turborepo monorepo with two apps and nine internal packages.
+### Current State
 
-### Apps
+Single Next.js 16 application at the repository root, running on Bun.
+
+| Path | Purpose |
+|------|---------|
+| `/app` | Routes, layouts, server components, API route handlers |
+| `/components` | Reusable UI components (shadcn/ui, charts, dashboard, agent) |
+| `/lib` | Shared utilities, domain logic, integration helpers |
+| `/docker` | Docker Compose (PostgreSQL + OpenSandbox) and agent base image |
+
+### Target Architecture (monorepo)
+
+The project will evolve into a Bun workspaces + Turborepo monorepo with two apps and nine internal packages.
+
+#### Apps
 
 | App | Purpose |
 |-----|---------|
-| `apps/web` | Next.js 15 App Router — dashboard UI, agent chat, API routes (`/api/auth/[...all]`, `/api/v1/...`) |
+| `apps/web` | Next.js 16 App Router — dashboard UI, agent chat, API routes (`/api/auth/[...all]`, `/api/v1/...`) |
 | `apps/agent-worker` | Sidequest.js worker process that dequeues tasks and spawns agent sandboxes |
 
-### Packages
+#### Packages
 
 | Package | Purpose |
 |---------|---------|
@@ -272,7 +285,18 @@ Cross-org isolation enforced at the database layer — users in Org A cannot see
 
 ## Data Model
 
-Single PostgreSQL instance (`timescale/timescaledb-ha:pg16`) hosts all data:
+Single PostgreSQL instance (`timescale/timescaledb-ha:pg16`) hosts all data.
+
+### Dual Data-Access Layer
+
+One database, two clients — a deliberate MVP trade-off. Mastra auto-manages its own schema as part of its API contract.
+
+| Client | Manages | Migrations |
+|--------|---------|------------|
+| **ZenStack v3** (Kysely) | App data, ACL, encryption | `zen migrate dev` |
+| **Mastra** (`PgStore` + `PgVector`) | Memory, threads, embeddings | Auto-created by Mastra |
+
+Both clients share the same `DATABASE_URL`. Queue tables (Sidequest.js) are also auto-managed in the same database.
 
 ### App Tables (ZenStack v3)
 
@@ -340,7 +364,7 @@ Telemetry from AgentSession events. No OpenTelemetry pipeline — direct Kysely 
 | Runtime & PM | Bun | Package manager and runtime |
 | Monorepo | Turborepo | Build caching, parallel execution |
 | Linting | Biome v2 | Replaces ESLint + Prettier |
-| Frontend | Next.js 15 (App Router) | SSR, API routes, WebSocket |
+| Frontend | Next.js 16 (App Router) | SSR, API routes, WebSocket |
 | UI Components | shadcn/ui + AI elements | Chat/AI components |
 | Charts | Tremor | Dashboard visualizations |
 | Styling | Tailwind CSS v4 | Utility-first CSS |
@@ -363,7 +387,30 @@ Telemetry from AgentSession events. No OpenTelemetry pipeline — direct Kysely 
 
 ---
 
-## Monorepo Structure
+## Project Structure
+
+### Current
+
+```
+pihordev/
+├── app/                              # Next.js 16 App Router
+│   ├── (auth)/                       # Login, signup, invite
+│   ├── (dashboard)/                  # Dashboard pages
+│   └── api/                          # API routes
+├── components/
+│   └── ui/                           # shadcn/ui components
+├── lib/                              # Utilities (cn, types, etc.)
+├── docker/                           # Docker Compose + agent base image
+├── docs/                             # Plans and specs
+├── packages/
+│   ├── db/                           # ZenStack v3 schema + Kysely client
+│   └── shared/                       # Types, constants, utilities
+├── biome.json
+├── next.config.ts
+└── package.json
+```
+
+### Target (monorepo)
 
 ```
 pihordev/
@@ -378,8 +425,7 @@ pihordev/
 │   │       ├── ai/                   # AI elements (chat)
 │   │       ├── charts/               # Tremor
 │   │       ├── dashboard/            # KPI cards, usage charts
-│   │       ├── agent/                # Chat, status badge
-│   │       └── project/              # Project components
+│   │       └── agent/                # Chat, status badge
 │   │
 │   └── agent-worker/                 # Sidequest worker process
 │
@@ -395,12 +441,6 @@ pihordev/
 │   └── shared/                       # Types, constants, utilities
 │
 ├── skills/                           # Platform skills for agents
-│   ├── git-workflow/
-│   ├── test-runner/
-│   ├── code-review/
-│   ├── dependency-mgmt/
-│   └── project-setup/
-│
 ├── seed/                             # Seed data generator
 ├── docker/                           # Docker Compose + agent base image
 ├── .github/                          # CI/CD workflows + templates
