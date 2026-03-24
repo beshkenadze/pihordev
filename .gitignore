@@ -33,3 +33,8 @@ pgdata/
 
 # Specs
 docs/specs/
+
+# Ralphex
+.ralphex/
+node_modules/
+.next/
