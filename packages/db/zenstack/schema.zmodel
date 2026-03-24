@@ -3,14 +3,8 @@ datasource db {
   url = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "zenstack-client"
-  output = "../node_modules/.zenstack"
-}
-
 plugin encryption {
-  provider = "@zenstackhq/encryption"
-  encryptionKey = env("ENCRYPTION_KEY")
+  provider = "zenstack-encryption"
 }
 
 // ─── Organization ────────────────────────────────────────

@@ -113,12 +113,12 @@ The platform lets users create projects (linked git repos), submit tasks in natu
 
 ### Task 8: ZenStack v3 schema — app tables
 
-- [ ] install `@zenstackhq/orm`, `@zenstackhq/cli`, `pg` driver in `packages/db`
-- [ ] define ZModel schema: `organization`, `team`, `user`, `member`, `project`, `task`, `agent_instance`, `api_key`
-- [ ] add ZenStack encryption plugin config for sensitive fields (api_key values)
-- [ ] run `zen generate` — verify TypeScript client generated
-- [ ] write tests for schema validation (field types, relations)
-- [ ] run tests — must pass before next task
+- [x] install `@zenstackhq/orm`, `@zenstackhq/cli`, `pg` driver in `packages/db`
+- [x] define ZModel schema: `organization`, `team`, `user`, `member`, `project`, `task`, `agent_instance`, `api_key`
+- [x] add ZenStack encryption plugin config for sensitive fields (api_key values)
+- [x] run `zen generate` — verify TypeScript client generated
+- [x] write tests for schema validation (field types, relations)
+- [x] run tests — must pass before next task
 
 ### Task 9: ZenStack v3 schema — telemetry tables
 

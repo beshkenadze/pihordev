@@ -13,7 +13,8 @@
 		"build": "tsc --build",
 		"typecheck": "tsc --noEmit",
 		"db:generate": "zen generate --schema zenstack/schema.zmodel",
-		"db:migrate": "zen migrate up"
+		"db:migrate": "zen migrate up",
+		"test:unit": "vitest run"
 	},
 	"dependencies": {
 		"@zenstackhq/orm": "^3",
@@ -21,6 +22,7 @@
 		"zenstack-encryption": "^0.2.1"
 	},
 	"devDependencies": {
-		"@zenstackhq/cli": "^3"
+		"@zenstackhq/cli": "^3",
+		"vitest": "^4.1.1"
 	}
 }

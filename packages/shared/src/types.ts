@@ -1,6 +1,17 @@
-export type TaskStatus = "pending" | "queued" | "running" | "done" | "error" | "cancelled";
+export type TaskStatus =
+	| "pending"
+	| "queued"
+	| "running"
+	| "done"
+	| "error"
+	| "cancelled";
 
-export type AgentEventType = "tool_call" | "llm_request" | "llm_response" | "error" | "completion";
+export type AgentEventType =
+	| "tool_call"
+	| "llm_request"
+	| "llm_response"
+	| "error"
+	| "completion";
 
 export interface AgentEvent {
 	id: string;
